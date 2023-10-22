@@ -5,7 +5,6 @@
 using namespace std;
 // iostream, vector and queue are included
 // Hint: use breadth-first-search
-#include <tuple>
 int secondsToBeRotten(vector<vector<int>>& grid) {
     int n = grid.size(), m = grid[0].size();
     vector<vector<int>> visited = grid;
