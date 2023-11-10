@@ -11,6 +11,7 @@ int kthSmallest(BSTNode* root, int k) {
         if(temp->right) q.push(temp->right);
         arr.push_back(temp->val);
     }
+    // Real algorithm start here
     sort(arr.begin(), arr.end());
     return arr[k-1];
 }
