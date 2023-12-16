@@ -1,5 +1,4 @@
 #include "main.h"
-inline int MAXSIZE = 0;
 /// Insert text here //
 // Implement Huffman tree for customer encoding
 class HuffNode {
@@ -109,7 +108,7 @@ struct Compare {
 // Xây dựng cây Huff từ danh sách X
 inline HuffTree* buildHuff(vector<pair<char,int>>& result) {
 	priority_queue <pair<int, HuffTree*>, vector<pair<int, HuffTree*>>, Compare> forest; // create a min heap
-	for(int i = 0; i < result.size(); i++) {
+	for(int i = 0; i < int(result.size()); i++) {
 		HuffTree* tree = new HuffTree(result[i].first, result[i].second); 
 		forest.push(make_pair(i, tree));
 	}
@@ -124,7 +123,6 @@ inline HuffTree* buildHuff(vector<pair<char,int>>& result) {
 		forest.pop();
 		temp3 = new HuffTree(temp1, temp2);
 		unordered_map<HuffNode*, HuffNode*> parentMap;
-		HuffNode* root = temp3->root();
 		nodeStack.push(temp3->root());
 		while(!nodeStack.empty()) {
 			if(rotateCount == 3) break;
@@ -156,14 +154,29 @@ inline HuffTree* buildHuff(vector<pair<char,int>>& result) {
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 					else if(Rparent->right() == temp) {
 						Rparent->setRight(newNode);
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 				}
+				node = temp3->root();
+				while(!nodeStack.empty()) nodeStack.pop();
+				nodeStack.push(node);
+				parentMap.clear();
+				continue; 
 			}
 			else if(balance > 1 && temp3->getBalance(newNodeLeft) < 0) {
 				++rotateCount;
@@ -183,14 +196,29 @@ inline HuffTree* buildHuff(vector<pair<char,int>>& result) {
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 					else if(Rparent->right() == temp) {
 						Rparent->setRight(newNode);
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 				}
+				node = temp3->root();
+				while(!nodeStack.empty()) nodeStack.pop();
+				nodeStack.push(node);
+				parentMap.clear();
+				continue; 
 			}
 			else if(balance < -1 && temp3->getBalance(newNodeRight) <= 0) {
 				++rotateCount;
@@ -208,14 +236,29 @@ inline HuffTree* buildHuff(vector<pair<char,int>>& result) {
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 					else if(Rparent->right() == temp) {
 						Rparent->setRight(newNode);
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 				}
+				node = temp3->root();
+				while(!nodeStack.empty()) nodeStack.pop();
+				nodeStack.push(node);
+				parentMap.clear();
+				continue; 
 			}
 			else if(balance < -1 && temp3->getBalance(newNodeRight) > 0){
 				++rotateCount;
@@ -235,14 +278,30 @@ inline HuffTree* buildHuff(vector<pair<char,int>>& result) {
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 					else if(Rparent->right() == temp) {
 						Rparent->setRight(newNode);
 						parentMap[temp] = newNode;
 						parentMap[newNode] = parent; 
 						Rparent->updateHgt();
+						while(parent != temp3->root()) {
+							parent = parentMap[parent];
+							Rparent = static_cast<IntlNode*>(parent);
+							Rparent->updateHgt();
+						}
 					}
 				}
+				// Reset root, rất nhảm
+				node = temp3->root();
+				while(!nodeStack.empty()) nodeStack.pop();
+				nodeStack.push(node);
+				parentMap.clear();
+				continue; 
 			}
 			if(newNode->right()) {
 				nodeStack.push(newNode->right());
@@ -378,7 +437,7 @@ public:
 		int capacity;
 		int keyCount; // Chạy từ 0 -> inf
 	public:
-		Gojo() {
+		Gojo(int MAXSIZE) {
 			this->capacity = MAXSIZE;
 			this->HashTable.resize(capacity);
 			for(int i = 0; i < this->capacity; ++i) {
@@ -398,7 +457,7 @@ public:
 		void printInOrderG(BSTNode* root) {
 			if(!root) return;
 			printInOrderG(root->lc);
-			cout << root->RESULT << "\n";
+			solution << root->RESULT << "\n";
 			printInOrderG(root->rc);
 		}
 		void LimitlessHelp(int& num) {
@@ -416,29 +475,36 @@ public:
 		int NUM;
 		queue<int> area;
 	public:
-		Sukuna(int ID, int NUM, int RESULT): ID(ID), NUM(NUM), enteringTime(-1){
+		Sukuna(int ID, int NUM, int RESULT){
+			this->ID = ID;
+			this->NUM = NUM;
+			this->enteringTime = -1;
 			this->area.push(RESULT);
 		}
 		~Sukuna() {
-			this->clear();
+			this->clear(false);
 		}
 		bool isEmpty() {
 			return this->NUM > 0 ? false : true;
 		}
 		void deleteNum(int num) {
 			if(num >= NUM) {
-				this->clear();
+				this->clear(true);
 			}
 			else {
 				while(num > 0) {
+					solution << this->area.front() << "-" << this->ID << "\n";
 					this->area.pop();
 					--this->NUM;
 					--num;
 				}
 			}
 		}
-		void clear() { // Xóa sạch mọi thứ tại khu vực Sukuna, đồng thời cập nhật lại thời gian
-			while(!area.empty()) area.pop();
+		void clear(bool flag) { // Xóa sạch mọi thứ tại khu vực Sukuna, đồng thời cập nhật lại thời gian
+			while(!area.empty()) {
+				if(flag) solution << this->area.front() << "-" << this->ID << "\n";
+				area.pop();
+			}
 			this->NUM = 0;
 			enteringTime = -1;
 		}
@@ -450,7 +516,7 @@ public:
 		int capacity;
 		int size;
 	public:
-		min_heap() {
+		min_heap(int MAXSIZE) {
 			this->capacity = MAXSIZE;
 			this->size = 0;
 			this->minheap.resize(capacity);
@@ -553,16 +619,18 @@ public: // My attributes go here
 	min_heap* SukunaRestaurant;
 	Gojo* GojoRestaurant;
 	HuffTree* newestCustomer;
+	int MAXSIZE;
 public:
-	Restaurant() {
-		this->SukunaRestaurant = new min_heap();
-		this->GojoRestaurant = new Gojo();
+	Restaurant(int MAXSIZE) {
+		this->SukunaRestaurant = new min_heap(MAXSIZE);
+		this->GojoRestaurant = new Gojo(MAXSIZE);
 		this->newestCustomer = nullptr;
+		this->MAXSIZE = MAXSIZE;
 	}
 	~Restaurant() {
 		delete SukunaRestaurant;
 		delete GojoRestaurant;
-		newestCustomer->clear(newestCustomer->root());
+		if(newestCustomer) newestCustomer->clear(newestCustomer->root());
 		delete newestCustomer;
 	}
 	static bool cmp(pair <char, int> a, pair <char, int> b) { 
@@ -582,7 +650,7 @@ public:
 		// Time complex: O(nlogn)
 		// Space Aux: O(n)
 		map <char, int> m;
-		for(int i = 0; i < name.size(); i++) {
+		for(int i = 0; i < int(name.size()); i++) {
 			m[name[i]] ++; // Giống key thì tăng value key đó lên 1
 		}
 		vector<pair<char, int>> result;
@@ -591,7 +659,7 @@ public:
 		}
 		caesar_encrypt(result, m, name);
 		map<char, int> updated_m;
-		for(int i = 0; i < result.size(); ++i) {
+		for(int i = 0; i < int(result.size()); ++i) {
 			updated_m[result[i].first] += result[i].second;
 		}
 		result.clear();
@@ -607,12 +675,12 @@ public:
 		// Time complex: O(n)
 		// Space Aux: O(1)
 		int shift;
-		for(int i = 0; i < name.size(); ++i) {
+		for(int i = 0; i < int(name.size()); ++i) {
 			shift = m[name[i]];
 			if(isupper(name[i])) name[i] = (name[i] + shift - 'A') % 26 + 'A';
 			else name[i] = (name[i] + shift - 'a') % 26 + 'a';
 		}
-		for(int i = 0; i < result.size(); ++i) {
+		for(int i = 0; i < int(result.size()); ++i) {
 			shift = result[i].second;
 			if(isupper(result[i].first)) result[i].first = (result[i].first + shift - 'A') % 26 + 'A';
 			else result[i].first = (result[i].first + shift - 'a') % 26 + 'a'; 
@@ -620,7 +688,7 @@ public:
 	}
 	bool checkValid(const string& name) { // Kiểm tra tên khách hàng có tối thiểu 3 kí tự khác nhau hay không
 		unordered_set<char> checkList;
-		for(int i = 0; i < name.size(); i++) {
+		for(int i = 0; i < int(name.size()); i++) {
 			checkList.insert(name[i]);
 		}
 		return checkList.size() >= 3;
@@ -657,14 +725,12 @@ public:
 			generateHuffmanCodes(X->root(), "", HuffCode);
 			string temp = "";
 			// Dịch tên sang mã nhị phân có tối đa 10 phần tử O(n)
-			for(int i = 0; i < name.size(); ++i) {
+			for(int i = 0; i < int(name.size()); ++i) {
 				temp += HuffCode[name[i]];
 			}
-			cout << temp << "\n";
 			if(temp.size() > 10) temp = temp.substr(temp.size() - 10);
 			reverse(temp.begin(), temp.end());
 			RESULT = binarytoDecimal(temp);
-			cout << RESULT << "\n";
 		}
 		else { // Trường hợp cây có 1 nút
 			RESULT = 0;
@@ -697,35 +763,6 @@ public:
 		BSTtoArray(root->lc, arr);
 		BSTtoArray(root->rc, arr);
 	}
-	bool isEqual(BSTNode* a, BSTNode* b) {
-		// Dùng đệ quy, kiểm tra xem 2 cây có tương tự với nhau hay không?
-		// Nếu cùng giá trị hoặc đều là null thì trả về true, else false
-		if(!a && !b) return true;
-		else if (a && b) {
-			return a->RESULT == b->RESULT && a->Key == b->Key && isEqual(a->lc, b->lc) && isEqual(a->rc, b->rc);
-		}
-		else return false;
-	}
-	static bool compare(const pair<int,int>& a, const pair<int,int>& b) {
-		if(a.first == b.first) return a.second < b.second;
-		return a.first < b.first;
-	}
-	int countValidPermutations(BSTNode* root, vector<pair<int,int>> arr) {
-		// Lưu ý mảng này cần phải được sort theo thứ tự ascending
-		// Nếu ta có 2 giá trị result tương ứng, key của nó cũng phải được sorted theo ascending
-		int count = 0;
-		BST* newTree = new BST();
-		do {
-			if(root->Key != arr[0].second || root->RESULT != arr[0].first) continue;
-			for(int i = 0; i < arr.size(); i++) {
-				newTree->add(arr[i].first, arr[i].second);
-			}
-			if(isEqual(root, newTree->root)) ++count;
-			newTree->clear(); // Xóa cây (khỏi cần lưu ý chỗ này nữa)
-		} while(next_permutation(arr.begin(), arr.end()));
-		delete newTree; newTree = nullptr;
-		return count;
-	}
 	/* 				GIẢI THUẬT TÌM SỐ LÀN SẮP XẾP LẠI MẢNG ĐỂ RA CÂY FUCKING BST GOJO
 	Tiền điều kiện: 1 mảng có thể sinh ra cây BST của Gojo (đi Preorder) với N phần tử
 	Hậu điều kiện: Số cách Y
@@ -752,7 +789,7 @@ public:
 	long long int DFS(vector<pair<int,int>> arr, const vector<vector<long long>>& pascalT) {
 		if(arr.size() <= 2) return 1 % MAXSIZE;
 		vector<pair<int,int>> left, right;
-		for(int i = 1; i < arr.size(); ++i) {
+		for(int i = 1; i < int(arr.size()); ++i) {
 			if(arr[i].first < arr[0].first) left.push_back(arr[i]);
 			else right.push_back(arr[i]);
 		}
@@ -760,12 +797,16 @@ public:
 	}
 	void KOKUSEN() {
 		for(int i = 0; i < GojoRestaurant->capacity; ++i) {
-			if(GojoRestaurant->HashTable[i]->nodeCount == 0 || GojoRestaurant->HashTable[i]->nodeCount == 1) continue;
-			vector<pair<int,int>> arr;
-			BSTtoArray(GojoRestaurant->HashTable[i]->root, arr);
-			vector<vector<long long>> pascalT(arr.size() + 1);
-			PascalTriangle(pascalT, arr.size());
-			long long int Y = DFS(arr, pascalT);
+			if(GojoRestaurant->HashTable[i]->nodeCount == 0 ) continue;
+			long long int Y;
+			if(GojoRestaurant->HashTable[i]->nodeCount != 1) {
+				vector<pair<int,int>> arr;
+				BSTtoArray(GojoRestaurant->HashTable[i]->root, arr);
+				vector<vector<long long>> pascalT(arr.size() + 1);
+				PascalTriangle(pascalT, arr.size());
+				Y = DFS(arr, pascalT);
+			}
+			else Y = 1 % MAXSIZE;
 			if(Y >= GojoRestaurant->HashTable[i]->nodeCount) {
 				GojoRestaurant->HashTable[i]->clear();
 			}
@@ -780,7 +821,7 @@ public:
 			}
 		}
 	}
-
+	
 	void KEITEIKEN(int num) {
 		// Pop các node cần xóa tại root ra. Node tại root luôn có thời gian đi vào và NUM là nhỏ nhất
 		// Sau đó tiến hành xóa tại các khu vực, sau khi xóa tại các khu vực, nếu khu vực vẫn còn thì tiến hành gắn vào lại
@@ -805,16 +846,16 @@ public:
 		if(!root->isLeaf()) {
 			IntlNode* internal = static_cast<IntlNode*>(root);
 			printInOrder(internal->left());
-			cout << internal->weight() << "\n";
+			solution << internal->weight() << "\n";
 			printInOrder(internal->right());
 		}
 		else {
 			LeafNode* leaf = static_cast<LeafNode*>(root);
-			cout << leaf->getK() << "\n";
+			solution << leaf->getK() << "\n";
 		}
 	}
 	void HAND() {
-		this->printInOrder(this->newestCustomer->root());
+		if(newestCustomer) this->printInOrder(this->newestCustomer->root());
 	}
 	void LIMITLESS(int num) {
 		if(num > MAXSIZE || num < 1) return; // Num không phải là valid ID
@@ -823,32 +864,34 @@ public:
 	
 	void preOrderCleave(int index, int num) {
 		stack<int> preorderlist;
-		stack<int> printResult;
 		preorderlist.push(index); // đưa index đầu tiên vào để duyệt
 		while(!preorderlist.empty()) { // Duyệt preorder minheap
+			stack<int> printResult;
 			index = preorderlist.top();
-			queue<int> q = SukunaRestaurant->minheap[index]->area;
-			preorderlist.pop();
-			int left = 2*index+1;
-			int right = 2*index+1;
-			if(num >= SukunaRestaurant->minheap[index]->NUM) {
+			if(SukunaRestaurant->minheap[index]) {
+				queue<int> q = SukunaRestaurant->minheap[index]->area;
 				while(!q.empty()) { // copy gia tri tu queue khu vuc cua Sukuna vao stack
 					printResult.push(q.front());
 					q.pop();
 				}
-			}
-			else {
-				int i = num;
-				while(i > 0) {
-					printResult.push(q.front());
-					q.pop();
-					--i;
+				if(num >= SukunaRestaurant->minheap[index]->NUM) {
+					while(!printResult.empty()) {
+					solution << SukunaRestaurant->minheap[index]->ID <<"-" << printResult.top() << "\n";
+					printResult.pop();
+					}
+				}
+				else {
+					int i = num;
+					while(i>0) {
+						solution << SukunaRestaurant->minheap[index]->ID <<"-" << printResult.top() << "\n";
+						printResult.pop();
+						--i;
+					}
 				}
 			}
-			while(!printResult.empty()) {
-				cout << SukunaRestaurant->minheap[index]->ID <<"-" << printResult.top();
-				printResult.pop();
-			}
+			preorderlist.pop();
+			int left = 2*index+1;
+			int right = 2*index+2;
 			if(right < SukunaRestaurant->size) preorderlist.push(right);
 			if(left < SukunaRestaurant->size) preorderlist.push(left);
 		}
@@ -866,8 +909,8 @@ inline void simulate(string filename)
 	while(ss >> str) {
 		if(str == "MAXSIZE") {
 			ss >> maxsize;
-			MAXSIZE = stoi(maxsize);
-			r = new Restaurant();
+			int MAXSIZE = stoi(maxsize);
+			r = new Restaurant(MAXSIZE);
 			flag = true;
 		}
 		else if(str == "LAPSE") {
